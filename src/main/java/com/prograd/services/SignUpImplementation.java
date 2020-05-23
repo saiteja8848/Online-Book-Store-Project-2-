@@ -1,18 +1,19 @@
 package com.prograd.services;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import com.prograd.model.User;
 import com.prograd.utilites.ExcelOperations;
+import com.prograd.view.UserInterface;
 
 public class SignUpImplementation implements SignUpInterface {
 
 	private ExcelOperations excelOperations;
 	private Scanner input = new Scanner(System.in);
 
-	public void start() throws IOException {
+	public void start() throws Exception {
 		System.out.println("\nPlease Enter the Following Details\n----------------------------------");
 		System.out.print("Enter your Full Name:");
 		String name = input.nextLine();
@@ -22,65 +23,77 @@ public class SignUpImplementation implements SignUpInterface {
 		String phoneNumber = input.nextLine();
 		System.out.print("Enter your role(admin/customer):");
 		String role = input.nextLine();
-		System.out.print("Enter password:");
+		System.out.print("Enter password(min-length-8,atleast 1 upperCase,LowerCase,SpecialCharacter,a digit):");
 		String password = input.nextLine();
-		System.out.print("ReType-Password:");
+		System.out.print("Confirm-Password:");
 		String retype = input.nextLine();
+		System.out.println(name+" "+emailId+" "+phoneNumber+" "+role+" "+password);
+		
 		if(password.contentEquals(retype))
 		validate(name,emailId,phoneNumber,role,password);
 		else
-			System.out.println("Passwords Does Not Match");
+		{	System.out.println("\nPasswords Does Not Match to go further validating further Details\n");
+		    UserInterface.main(null);
+		}
 
 	}
 
-	//alphanumeric@gmail.com
+	public boolean validateName(String name) {
+		return name.matches("^[a-zA-Z]*$");
+	}
+	
+
 	public boolean validateEmailId(String emailId) {
-		//System.out.println("email");
-		return true;
+		return emailId.matches("^[^@\\s]+@[^@\\s\\.]+\\.[^@\\.\\s]+$");
 	}
-
-	 //atleast 1uppercase, 1lowercase,1special,min-8 length, max-12 
+ 
 	public boolean validatePassword(String password) {
-		//System.out.println("password");
-		return true;
+		return password.matches("^(?=.{8,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\\W).*$");
 	}
 
-	//[0-9][10]
 	public boolean validatePhoneNumber(String phoneNumber) {
-		//System.out.println("mobile");
-		//return  phoneNumber.matches("(0/91)?[7-9][0-9]{9}");
-		return true;
+		return  phoneNumber.matches("(0/91)?[7-9][0-9]{9}");
 	}
 
-	public boolean checkForExistenceOFSameFields(String emailId, String password, String phoneNumber)
-			throws IOException {
-		//System.out.println("data");
-		excelOperations = new ExcelOperations("resources/BookStoreData.xlsx", "RegisteredUsers");
-		List<User> usersList = excelOperations.readData();
+	public boolean checkForExistenceOFSameFields(String emailId, String password, String phoneNumber) throws IOException {
 		boolean status = true;
-		for (User user : usersList) {
-         if(user.getEmailId().contentEquals(emailId)||user.getPhoneNumber().contentEquals(password)&&user.getPhoneNumber().contentEquals(phoneNumber))
+		excelOperations = new ExcelOperations();
+		List<List<String>> data = excelOperations.read("resources/BookStoreData.xlsx","RegisteredUserDetails");
+		for(int i=0;i<data.size();i++) {
+		for (int j=0;j<data.get(i).size();j++) {
+         if(data.get(i).get(j).contains(emailId)||data.get(i).get(j).contains(password)||data.get(i).get(j).contains(phoneNumber))
          {status=false;	break;}			
+		}
 		}
 		return status;
 	}
 
 	public void validate(String name,String emailId,String phoneNumber,String role,String password) throws IOException {
-	   boolean a,b,c,d;
-	   a=validateEmailId(emailId);
-	   b=validatePhoneNumber(password);
-	   c=validatePassword(password);
-	   d=checkForExistenceOFSameFields(emailId, password, phoneNumber);
-
-	   System.out.println(a+""+b+""+c+d);
-	   if (a==true&&b==true&&c==true&&d==true) {
-			excelOperations = new ExcelOperations("resources/BookStoreData.xlsx", "RegisteredUsers");
-			excelOperations.writeData(name, emailId, phoneNumber,role, password);
+	   boolean validatedName = validateName(name);
+	   boolean validatedMail=validateEmailId(emailId);
+	   boolean validatedMobileNo=validatePhoneNumber(phoneNumber);
+	   boolean validatedPassword=validatePassword(password);
+	   boolean dataExisting=checkForExistenceOFSameFields(emailId, password, phoneNumber);
+	   if (validatedName&&validatedMail&&validatedMobileNo&&validatedPassword&&dataExisting) {
+		   excelOperations = new ExcelOperations();
+		   List<List<String>> data= new ArrayList<>();
+		   List<String> user = new ArrayList<>();
+		   user.add(name);user.add(emailId);user.add(phoneNumber);user.add(role);user.add(password);
+	       data.add(user);
+		   excelOperations.write("resources/BookStoreData.xlsx","RegisteredUserDetails", data);
 		}
-		else if(d==false)
-			System.out.println("Same Data Exists");
+		else if(dataExisting==false)
+			System.out.println("\n-----------Some One has already Registered with Same Fields------!");
+		else if(validatedName==false)
+			System.out.println("\n------please Enter valid Name-----!");
+		else if(validatedMail==false)
+			System.out.println("\n----Please Enter valid MailID----!");
+		else if(validatedMobileNo==false)
+			System.out.println("\n--------Please Enter valid mobile Number-----!");
 		else
-			System.out.println("Details Not According to the ");
+			if(validatedPassword==false) {
+			System.out.println("\n--------Please Provide Password following rules(Min-length(8),atleast a upperCase,lowerCase,Digit,SpecialCharacter)---------");
+		}
 
 	}
 

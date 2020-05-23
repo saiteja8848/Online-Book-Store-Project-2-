@@ -1,110 +1,126 @@
 package com.prograd.utilites;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.prograd.model.Book;
 import com.prograd.model.Genre;
-import com.prograd.model.User;
 
 public class ExcelOperations {
 
 	private FileInputStream fileInputStream;
-	private FileOutputStream fileOutStream;
-	private XSSFWorkbook workbook;
-	private XSSFSheet sheet;
-	private String fileName;
-	private String sheetName;
+	private FileOutputStream fileOutputStream;
+	private XSSFWorkbook workBook;
+	private XSSFSheet workSheet;
 
-	public ExcelOperations() {}
-	
-	public ExcelOperations(String fileName, String sheetName) throws IOException {
-		this.fileName = fileName;
-		this.sheetName = sheetName;
+	// Appending Data to the file
+	public void write(String fileName, String sheetName, List<List<String>> data) throws IOException {
 		fileInputStream = new FileInputStream(fileName);
-		workbook = new XSSFWorkbook(fileInputStream);
-		sheet = workbook.getSheet(sheetName);
-	}
-
-	public List<User> readData() {
-		System.out.println("entered"+sheet.getPhysicalNumberOfRows());
-		
-		Iterator<Row> rowIterator = sheet.iterator();
-		List<User> userList = new ArrayList<>();
-		while (rowIterator.hasNext()) {
-			if(!rowIterator.hasNext()){
-				break;
+		workBook = new XSSFWorkbook(fileInputStream);
+		workSheet = workBook.getSheet(sheetName);
+		int totalNoOfRows = workSheet.getPhysicalNumberOfRows();
+		for (int i = 0; i < data.size(); i++) {
+			Row row = workSheet.createRow(totalNoOfRows++);
+			for (int j = 0; j < data.get(i).size(); j++) {
+				row.createCell(j).setCellValue(data.get(i).get(j));
 			}
-			Row row = rowIterator.next();
-			User user = new User();
-			user.setFullName(row.getCell(0).getStringCellValue());
-			user.setEmailId(row.getCell(1).getStringCellValue());
-			user.setPhoneNumber(row.getCell(2).getStringCellValue());
-			user.setRole(row.getCell(3).getStringCellValue());
-			user.setPassword(row.getCell(4).getStringCellValue());
-			userList.add(user);
 		}
-		return userList;
-
+		fileOutputStream = new FileOutputStream(fileName);
+		workBook.write(fileOutputStream);
+		fileOutputStream.close();
+        fileInputStream.close();
+		System.out.println("\nYour Account is Successfully Registered");
 	}
 
-	public void writeData(String name, String emailId, String phoneNumber,String role, String password) throws IOException {
-		int rowSize = sheet.getPhysicalNumberOfRows() + 1;
-		//System.out.println("ROWSIZE:" +rowSize);
-		Row row = sheet.createRow(rowSize++);
-		row.createCell(0).setCellValue(name);
-		row.createCell(1).setCellValue(emailId);
-		row.createCell(2).setCellValue(phoneNumber);
-		row.createCell(3).setCellValue(role);
-		row.createCell(4).setCellValue(password);
-		fileOutStream = new FileOutputStream(fileName);
-		workbook.write(fileOutStream);
-		fileOutStream.close();
-		System.out.println("\n\tYour Successfully Registered");
+	public List<List<String>> read(String fileName, String sheetName) throws IOException {
+		fileInputStream = new FileInputStream(fileName);
+		workBook = new XSSFWorkbook(fileInputStream);
+		workSheet = workBook.getSheet(sheetName);
+		int totalNoOfRows = workSheet.getPhysicalNumberOfRows();
+		List<List<String>> main = new ArrayList<>();
+
+		for (int i = 0; i < totalNoOfRows; i++) {
+			Row row = workSheet.getRow(i);
+			List<String> data = new ArrayList<>();
+			for (int j = 0; j < row.getLastCellNum(); j++) {
+				data.add(row.getCell(j).toString());
+			}
+			main.add(data);
+		}
+		 fileInputStream.close();
+		return main;
 	}
 
-	public List<Genre> loadData() {
-	    List<Genre> Genres = new ArrayList<>();
-		//Biography books
-		List<Book> Books1 = new ArrayList<>();
-        Books1.add(new Book(1,"Steve-Jobs",250,10,true));
-        Books1.add(new Book(2,"Nelson-Mandal",200,10,true));
-        Books1.add(new Book(3,"AbudulKalam",100,10,true));
-        Genre Biography = new Genre(1,"Bio-Graphy",Books1);
-        
-        //comedy
-        List<Book> Books2 = new ArrayList<>();
-        Books2.add(new Book(1,"Good-Omens",250,10,true));
-        Books2.add(new Book(2,"Deep thoughts",200,10,true));
-        Books2.add(new Book(3,"Cruel Shoes",100,10,true));
-        Genre Comedy = new Genre(2,"Comedy",Books2);
-        
-        //Fantasy
-        List<Book> Books3 = new ArrayList<>();
-        Books3.add(new Book(1,"Good-Omens",250,10,true));
-        Books3.add(new Book(2,"Deep thoughts",200,10,true));
-        Books3.add(new Book(3,"Cruel Shoes",100,10,true));
-        Genre fantasy = new Genre(3,"Fantasy",Books3);
-       
-        Genres.add(Biography);
-        Genres.add(Comedy);
-        Genres.add(fantasy);
-        return Genres;
-        
+	public void display(String fileName, String sheetName) throws FileNotFoundException, IOException {
+		fileInputStream = new FileInputStream(fileName);
+		workBook = new XSSFWorkbook(fileInputStream);
+		workSheet = workBook.getSheet(sheetName);
+		int totalNoOfRows = workSheet.getPhysicalNumberOfRows();
+		System.out.println("Data in the Excel Sheet is:");
+		for (int i = 0; i < totalNoOfRows; i++) {
+			Row row = workSheet.getRow(i);
+			for (int j = 0; j < row.getLastCellNum(); j++) {
+				System.out.print(row.getCell(j) + " ");
+			}
+			System.out.println();
+		}
+		 fileInputStream.close();
 	}
+
+	public void update(String fileName, String sheetName, String oldData, String newData) throws IOException {
+		workBook = new XSSFWorkbook(new FileInputStream(fileName));
+		workSheet = workBook.getSheet(sheetName);
+		int totalNoOfRows = workSheet.getPhysicalNumberOfRows();
+		for (int i = 0; i < totalNoOfRows; i++) {
+			Row row = workSheet.getRow(i);
+			for (int j = 0; j < row.getLastCellNum(); j++) {
+				if (row.getCell(j).toString().contentEquals(oldData)) {
+					row.getCell(j).setCellValue(newData);
+				}
+			}
+		}
+		fileOutputStream = new FileOutputStream(fileName);
+		workBook.write(fileOutputStream);
+		System.out.println("Data updated sucessfully in excelSheet");
+	}
+
 	
+	public void update(String fileName, String sheetName,String searchValue, String oldData, String newData) throws IOException {
+		workBook = new XSSFWorkbook(new FileInputStream(fileName));
+		workSheet = workBook.getSheet(sheetName);
+		int totalNoOfRows = workSheet.getPhysicalNumberOfRows();
+		for (int i = 0; i < totalNoOfRows; i++) {
+			Row row = workSheet.getRow(i);
+			
+			if(row.getCell(2).toString().contentEquals(searchValue)) {
+			for (int j = 0; j < row.getLastCellNum(); j++) {
+				if (row.getCell(j).toString().contentEquals(oldData)) {
+					row.getCell(j).setCellValue(newData);
+				}	
+		     	}
+			}
+			
+		}
+		fileOutputStream = new FileOutputStream(fileName);
+		workBook.write(fileOutputStream);
+		System.out.println("Data updated sucessfully in excelSheet");
+	}
 
 	
 	
-
+	
+	
+	
+	
+	
+	
+	
 }

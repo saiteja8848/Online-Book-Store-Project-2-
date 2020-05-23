@@ -4,13 +4,13 @@ import java.util.List;
 
 public class Genre {
 	private String genreName;
-	private List<Book> books;
+	private boolean status;
 	private int genreId;
 
-	public Genre(int genreId,String genreName, List<Book> books) {
-		this.genreId=genreId;
+	public Genre(int genreId, String genreName, boolean status) {
+		this.genreId = genreId;
 		this.genreName = genreName;
-		this.books = books;
+		this.status = status;
 	}
 
 	public String getGenreName() {
@@ -19,14 +19,6 @@ public class Genre {
 
 	public void setGenreName(String genreName) {
 		this.genreName = genreName;
-	}
-
-	public List<Book> getBooks() {
-		return books;
-	}
-
-	public void setBooks(List<Book> books) {
-		this.books = books;
 	}
 
 	public int getGenreId() {
@@ -38,14 +30,8 @@ public class Genre {
 	}
 
 	public void displayGenreDetails() {
-		System.out.println(this.genreId+"."+this.genreName);
+       if(this.status)
+		System.out.println(this.genreId + "." + this.genreName);
 	}
-	
-	public void displayBooksUnderGenre() {
-		for(Book book:books) {
-			System.out.println(book.getBookId()+"."+book.getBookName());
-		}
-	}
-	
 
 }
