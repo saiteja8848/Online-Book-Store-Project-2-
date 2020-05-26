@@ -1,17 +1,18 @@
+
 package com.prograd.model;
 
 public class Book {
 
-	private int genreId; 
+	private int genreId;
 	private int bookId;
 	private String bookName;
 	private int price;
 	private int quantity;
 	private boolean status;
 
-	public Book(int genreId,int bookId,String bookName, int price, int quantity, boolean status) {
-		this.genreId=genreId;
-		this.bookId=bookId;
+	public Book(int genreId, int bookId, String bookName, int price, int quantity, boolean status) {
+		this.genreId = genreId;
+		this.bookId = bookId;
 		this.bookName = bookName;
 		this.price = price;
 		this.quantity = quantity;
@@ -67,10 +68,9 @@ public class Book {
 	}
 
 	public void display() {
-		if(this.status) 
-			System.out.println(bookId+"."+bookName);
-		
-		
+		if (this.status)
+			System.out.println(bookId + "." + bookName);
+
 	}
 
 }

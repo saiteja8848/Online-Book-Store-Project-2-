@@ -1,7 +1,5 @@
 package com.prograd.model;
 
-import java.util.List;
-
 public class Genre {
 	private String genreName;
 	private boolean status;
@@ -30,8 +28,8 @@ public class Genre {
 	}
 
 	public void displayGenreDetails() {
-       if(this.status)
-		System.out.println(this.genreId + "." + this.genreName);
+		if (this.status)
+			System.out.println(this.genreId + "." + this.genreName);
 	}
 
 }

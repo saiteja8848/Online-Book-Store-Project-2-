@@ -12,13 +12,21 @@ import com.prograd.model.Genre;
 import com.prograd.utilites.AdminExcelOperation;
 import com.prograd.utilites.ExcelOperations;
 
-public class LoginImplementation implements LoginInterface {
 
+/*
+ * This class details with Registered Users.
+ * 1.ADMIN
+ * 2.CUSTOMER
+ * */
+
+
+//This class takes login details on created instance based on input, if Administrator, creates instance for Administrator, like for user ,,create instance of customer 
+public class LoginImplementation implements LoginInterface {
 	private ExcelOperations excelOperations;
 	private Scanner input = new Scanner(System.in);
-    private String userName=null;
-    private String phoneNumber =null;
-	
+	private String userName = null;
+	private String phoneNumber = null;
+
 	public void start() throws Exception {
 		String[] options = { "admin", "customer" };
 		String emailId = null;
@@ -41,7 +49,6 @@ public class LoginImplementation implements LoginInterface {
 				new Admin().adminOperations();
 				break;
 			case "customer":
-				System.out.println("userName:"+userName);
 				Customer customer = new Customer();
 				customer.setMailID(emailId);
 				customer.setUserName(userName);
@@ -75,9 +82,17 @@ public class LoginImplementation implements LoginInterface {
 
 }
 
+
+
+
+
+
+
+//Administrator class which deals  with  manipulation on the data in the excel sheet
+
 class Admin {
 	private Scanner inputReader = new Scanner(System.in);
-	private String[] options = { "ADD", "UPDATE", "DELETE", "VIEW_SALES","EXIT" };
+	private String[] options = { "ADD", "UPDATE", "DELETE", "VIEW_SALES", "EXIT" };
 	private AdminExcelOperation adminOperation = new AdminExcelOperation();
 
 	public void adminOperations() throws FileNotFoundException, IOException {
@@ -97,10 +112,10 @@ class Admin {
 			break;
 		case "VIEW_SALES":
 			viewSales();
-			break;	
+			break;
 		case "EXIT":
 			System.exit(0);
-			break;	
+			break;
 		default:
 			System.out.println("Invalid Option");
 			break;
@@ -114,37 +129,37 @@ class Admin {
 		switch (options[choice - 1]) {
 		case "ADDING_GENRE":
 			System.out.print("\nPlease Enter Number of genres to add:");
-			int count =inputReader.nextInt();
-			while(count!=0) {
-			System.out.print("\nEnter genreId:");
-			int genreId = inputReader.nextInt();
-			inputReader.nextLine();
-			System.out.print("Enter genreName:");
-			String genreName = inputReader.nextLine();
-			Genre genre = new Genre(genreId, genreName, true);
-			adminOperation.addGenre(genre);
-			count--;
+			int count = inputReader.nextInt();
+			while (count != 0) {
+				System.out.print("\nEnter genreId:");
+				int genreId = inputReader.nextInt();
+				inputReader.nextLine();
+				System.out.print("Enter genreName:");
+				String genreName = inputReader.nextLine();
+				Genre genre = new Genre(genreId, genreName, true);
+				adminOperation.addGenre(genre);
+				count--;
 			}
 			this.adminOperations();
 			break;
 		case "ADDING_BOOK":
 			System.out.print("\nPlease Enter Number of books to add:");
-			 count =inputReader.nextInt();
-			while(count!=0) {
-			System.out.print("\nEnter genreId which it belongs to:");
-			int genreId = inputReader.nextInt();
-			System.out.print("Enter the BookId:");
-			int bookId = inputReader.nextInt();
-			inputReader.nextLine();
-			System.out.print("Enter book name:");
-			String bookName = inputReader.nextLine();
-			System.out.print("Enter book Price:");
-			int price = inputReader.nextInt();
-			System.out.print("Enter Quantity:");
-			int quantity = inputReader.nextInt();
-			System.out.println(genreId + " " + bookId + " " + bookName + " " + price + " " + quantity);
-			adminOperation.addBook(new Book(genreId, bookId, bookName, price, quantity, true));
-			count--;
+			count = inputReader.nextInt();
+			while (count != 0) {
+				System.out.print("\nEnter genreId which it belongs to:");
+				int genreId = inputReader.nextInt();
+				System.out.print("Enter the BookId:");
+				int bookId = inputReader.nextInt();
+				inputReader.nextLine();
+				System.out.print("Enter book name:");
+				String bookName = inputReader.nextLine();
+				System.out.print("Enter book Price:");
+				int price = inputReader.nextInt();
+				System.out.print("Enter Quantity:");
+				int quantity = inputReader.nextInt();
+				System.out.println(genreId + " " + bookId + " " + bookName + " " + price + " " + quantity);
+				adminOperation.addBook(new Book(genreId, bookId, bookName, price, quantity, true));
+				count--;
 			}
 			this.adminOperations();
 			break;
@@ -155,13 +170,13 @@ class Admin {
 		}
 	}
 
-	
 	public void update() throws IOException {
 		ExcelOperations e = new ExcelOperations();
-		String fileName ="resources/BookStoreData.xlsx";
+		String fileName = "resources/BookStoreData.xlsx";
 		String sheetName;
 		String[] options = { "UPDATING_GENRE", "UPDATING_BOOK" };
-		System.out.print("\nUPDATING DATA\n------------\n1.Updating Genre Details\n2.Updating Book Details\nPlease Enter Your Choice:");
+		System.out.print(
+				"\nUPDATING DATA\n------------\n1.Updating Genre Details\n2.Updating Book Details\nPlease Enter Your Choice:");
 		int choice = inputReader.nextInt();
 		switch (options[choice - 1]) {
 		case "UPDATING_GENRE":
@@ -169,21 +184,21 @@ class Admin {
 			System.out.print("Please Enter old data value/name:");
 			String oldData = inputReader.nextLine();
 			System.out.print("Please Enter new data value/name:");
-			String newData =inputReader.nextLine();
-			sheetName="Genres";
+			String newData = inputReader.nextLine();
+			sheetName = "Genres";
 			e.update(fileName, sheetName, oldData, newData);
 			this.adminOperations();
 			break;
 		case "UPDATING_BOOK":
 			inputReader.nextLine();
 			System.out.print("Please Enter Book Name:");
-			String bookName = inputReader.nextLine(); 
+			String bookName = inputReader.nextLine();
 			System.out.print("Please Enter old data value/name:");
-		     oldData = inputReader.nextLine();
+			oldData = inputReader.nextLine();
 			System.out.print("Please Enter new data value/name:");
-			 newData =inputReader.nextLine();
-			sheetName="Books";
-			e.update(fileName, sheetName, bookName,oldData, newData);
+			newData = inputReader.nextLine();
+			sheetName = "Books";
+			e.update(fileName, sheetName, bookName, oldData, newData);
 			this.adminOperations();
 			break;
 		default:
@@ -192,8 +207,6 @@ class Admin {
 
 		}
 	}
-	
-	
 
 	public void delete() throws IOException {
 		String[] options = { "DELETING_GENRE", "DELETING_BOOK" };
@@ -223,19 +236,32 @@ class Admin {
 	}
 
 	public void viewSales() throws IOException {
-		 List<CartItems> saledBooks = adminOperation.getSalesData();
-		 if(saledBooks.size()>0)
-		 {
-			 System.out.print("\nMailId  \t BookName   unitPrice   QuantityPurchased    TotalBill\n---------------------------------------");
-		     for(CartItems item:saledBooks)
-			 System.out.println(item.getMailId()+"          "+item.getBookName()+"      "+item.getUnitPrice()+" "+item.getQuantity()+"   "+(item.getQuantity()*item.getUnitPrice()));
-		 
-		 }else
-			 System.out.println("No one Purchased the books Yet");
+		List<CartItems> saledBooks = adminOperation.getSalesData();
+		if (saledBooks.size() > 0) {
+			int total = 0;
+			System.out.print("\n----------BOOK SALES-----------\n");
+			for (CartItems item : saledBooks) {
+				System.out.println("MailId   :-" + item.getMailId());
+				System.out.println("BookName :-" + item.getBookName());
+				System.out.println("UnitPrice:-" + item.getUnitPrice());
+				System.out.println("Quantity :-" + item.getQuantity());
+				int t = (item.getQuantity() * item.getUnitPrice());
+				System.out.println("TotalBill:-" + t);
+				total += t;
+				System.out.println();
+			}
+			System.out.println("\n---------TOTAL SALES:-" + total);
+		} else
+			System.out.println("No one Purchased the books Yet");
+		this.adminOperations();
 	}
 
 }
 
+
+
+
+//customer class which deals with the operations like adding books to cart, billing 
 class Customer {
 	private Scanner inputReader = new Scanner(System.in);
 	private ExcelOperations excelOperations = new ExcelOperations();
@@ -243,8 +269,8 @@ class Customer {
 	private List<CartItems> itemsInCart = new ArrayList<>();
 	private String mailID = null;
 	private String userName = null;
-    private String phoneNumber =null;
-	
+	private String phoneNumber = null;
+
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
@@ -270,10 +296,10 @@ class Customer {
 	}
 
 	public void userOperations() throws FileNotFoundException, IOException {
-		String[] options = { "SHOPPING", "VIEW_CART", "CHECKOUT", "ALERT_ME", "EXIT" };
-		System.out.print("\n------Hi "+this.getUserName()+"-------\n");
+		String[] options = { "SHOPPING", "VIEW_CART", "CHECKOUT", "EXIT" };
+		System.out.print("\n------Hi " + this.getUserName() + "-------\n");
 		System.out.print("\nWelcome To User Operations\n--------------------------");
-		System.out.print("\n1.Store\n2.ViewCart\n3.Checkout\n4.Notify Me\n5.Exit\nPlease Enter Your Choice:");
+		System.out.print("\n1.Store\n2.ViewCart\n3.Billing\n4.Exit\nPlease Enter Your Choice:");
 		int choice = inputReader.nextInt();
 		switch (options[choice - 1]) {
 		case "SHOPPING":
@@ -284,9 +310,6 @@ class Customer {
 			break;
 		case "CHECKOUT":
 			checkOut();
-			break;
-		case "ALERT_ME":
-			alertMe();
 			break;
 		case "EXIT":
 			System.out.println("\n------Thank You for Visting the Store,Have a Nice Day!-----");
@@ -304,23 +327,29 @@ class Customer {
 		genres.stream().forEach(genre -> genre.displayGenreDetails());
 		System.out.print("Please enter your choice:(enter -1 to return back):");
 		int genreChoice = inputReader.nextInt();
-		if(genreChoice==-1) {this.userOperations();}
-		List<Book> books = adminOperation.getBooks(genreChoice);
-		if(books.size()>0) {
-		System.out.println("\nId BookName\n-----------");
-		books.stream().filter(book -> book.getGenreId() == genreChoice).forEach(book -> book.display());
-		System.out.print("Please enter your choice:(enter -1 to return back):");
-		int bookChoice = inputReader.nextInt();
-		if(bookChoice==-1) {this.shopping();}
-		System.out.print("Please enter quantity:(less than or equal to 10):");
-		int quantity = inputReader.nextInt();
-		addToCart(genreChoice, bookChoice, books, quantity);
-		}
-		else
-			{System.out.println("\nBooks are not Avaliable");
+		if (genreChoice == -1) {
 			this.userOperations();
+		}
+		List<Book> books = adminOperation.getBooks(genreChoice);
+		if (books.size() > 0) {
+			System.out.println("\nId BookName\n-----------");
+			books.stream().filter(book -> book.getGenreId() == genreChoice).forEach(book -> book.display());
+			System.out.print("Please enter your choice:(enter -1 to return back):");
+			int bookChoice = inputReader.nextInt();
+			if (bookChoice == -1) {
+				this.shopping();
 			}
-		
+			System.out.print("Please enter quantity:(less than or equal to 10):");
+			int quantity = inputReader.nextInt();
+			if (quantity <= 10)
+				addToCart(genreChoice, bookChoice, books, quantity);
+			else
+				System.out.println("Limit Exceed,Stock is not avaliable");
+		} else {
+			System.out.println("\nBooks are not Avaliable");
+			this.userOperations();
+		}
+
 	}
 
 	public void addToCart(int genreId, int bookId, List<Book> books, int quantity)
@@ -348,9 +377,8 @@ class Customer {
 
 	public void viewCart() throws FileNotFoundException, IOException {
 		System.out.println("\nItems in the Cart\n-----------------");
-		itemsInCart = adminOperation.getCartData(this.getMailID(), false,false);
+		itemsInCart = adminOperation.getCartData(this.getMailID(), false, false);
 		if (itemsInCart.size() > 0) {
-			System.out.print("\nBookName\t\tUnitPrice Quantity  TotalPice\n----------------------------------------");
 			for (CartItems item : itemsInCart) {
 				item.display();
 			}
@@ -361,26 +389,25 @@ class Customer {
 
 	public void checkOut() throws FileNotFoundException, IOException {
 		adminOperation.doCheckOut(this.getMailID());
-		itemsInCart = adminOperation.getCartData(this.getMailID(), true,false);
+		itemsInCart = adminOperation.getCartData(this.getMailID(), true, false);
 		if (itemsInCart.size() > 0) {
-			int totalPrice=0;
+			int totalPrice = 0;
 			System.out.print("\nCheckout Details\n---------------");
-			System.out.print("\nBookName  UnitPrice Quantity  TotalPice\n----------------------------------------");
 			for (CartItems item : itemsInCart) {
-				  item.display();
-				totalPrice+=(item.getQuantity()*item.getUnitPrice());
+				item.display();
+				totalPrice += (item.getQuantity() * item.getUnitPrice());
 			}
-			System.out.println("Total Price:"+totalPrice);
-		} 
-		else
+			System.out.println("Total Price:" + totalPrice);
+		} else
 			System.out.println("---------No items in the cart to checkout---------!");
 		adminOperation.resetCart();
 		this.userOperations();
-		
+
 	}
 
 	public void alertMe() throws IOException {
 		adminOperation.subscribed(this.userName, this.phoneNumber);
+		this.userOperations();
 	}
 
 }

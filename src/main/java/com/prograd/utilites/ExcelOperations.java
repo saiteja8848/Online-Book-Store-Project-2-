@@ -36,7 +36,7 @@ public class ExcelOperations {
 		fileOutputStream = new FileOutputStream(fileName);
 		workBook.write(fileOutputStream);
 		fileOutputStream.close();
-        fileInputStream.close();
+		fileInputStream.close();
 		System.out.println("\nYour Account is Successfully Registered");
 	}
 
@@ -55,7 +55,7 @@ public class ExcelOperations {
 			}
 			main.add(data);
 		}
-		 fileInputStream.close();
+		fileInputStream.close();
 		return main;
 	}
 
@@ -72,7 +72,7 @@ public class ExcelOperations {
 			}
 			System.out.println();
 		}
-		 fileInputStream.close();
+		fileInputStream.close();
 	}
 
 	public void update(String fileName, String sheetName, String oldData, String newData) throws IOException {
@@ -92,35 +92,26 @@ public class ExcelOperations {
 		System.out.println("Data updated sucessfully in excelSheet");
 	}
 
-	
-	public void update(String fileName, String sheetName,String searchValue, String oldData, String newData) throws IOException {
+	public void update(String fileName, String sheetName, String searchValue, String oldData, String newData)
+			throws IOException {
 		workBook = new XSSFWorkbook(new FileInputStream(fileName));
 		workSheet = workBook.getSheet(sheetName);
 		int totalNoOfRows = workSheet.getPhysicalNumberOfRows();
 		for (int i = 0; i < totalNoOfRows; i++) {
 			Row row = workSheet.getRow(i);
-			
-			if(row.getCell(2).toString().contentEquals(searchValue)) {
-			for (int j = 0; j < row.getLastCellNum(); j++) {
-				if (row.getCell(j).toString().contentEquals(oldData)) {
-					row.getCell(j).setCellValue(newData);
-				}	
-		     	}
+
+			if (row.getCell(2).toString().contentEquals(searchValue)) {
+				for (int j = 0; j < row.getLastCellNum(); j++) {
+					if (row.getCell(j).toString().contentEquals(oldData)) {
+						row.getCell(j).setCellValue(newData);
+					}
+				}
 			}
-			
+
 		}
 		fileOutputStream = new FileOutputStream(fileName);
 		workBook.write(fileOutputStream);
 		System.out.println("Data updated sucessfully in excelSheet");
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }

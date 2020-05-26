@@ -18,14 +18,15 @@ public class Notification {
 			String route = "p";
 			String myUrl = "https://www.fast2sms.com/dev/bulk?authorization=" + apiKey + "&sender_id=" + senderId
 					+ "&message=" + message + "&language=" + language + "&route=" + route + "&numbers=" + number;
+			//Connection
 			URL url = new URL(myUrl);
 			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
 			con.setRequestMethod("GET");
 			con.setRequestProperty("User-Agent", "Mozilla/5.0");
 			con.setRequestProperty("cache-control", "no-cache");
-			System.out.println("Wait............");
+			// System.out.println("Wait............");
 			int code = con.getResponseCode();
-			System.out.println("Response Code: " + code);
+			// System.out.println("Response Code: " + code);
 			StringBuffer response = new StringBuffer();
 			BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			while (true) {
@@ -35,9 +36,9 @@ public class Notification {
 				}
 				response.append(line);
 			}
-			//System.out.println(response);
-			if(code==200) {
-				System.out.println("Your are Subscribed for any latest Stock in the Store");
+			// System.out.println(response);
+			if (code == 200) {
+				System.out.println("You are Subscribed for any latest updates in the Store");
 			}
 
 		} catch (Exception e) {
